@@ -1,0 +1,108 @@
+buildscript {
+  repositories {
+    gradlePluginPortal()
+  }
+  dependencies {
+    classpath "io.github.fourlastor:construo:1.5.1"
+    if(enableGraalNative == 'true') {
+      classpath "org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:0.9.28"
+    }
+  }
+}
+plugins {
+  id "application"
+}
+apply plugin: 'io.github.fourlastor.construo'
+
+
+import io.github.fourlastor.construo.Target
+
+sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
+mainClassName = 'com.wolframpage.lwjgl3.Lwjgl3Launcher'
+application.setMainClass(mainClassName)
+eclipse.project.name = appName + '-lwjgl3'
+java.sourceCompatibility = 8
+java.targetCompatibility = 8
+if (JavaVersion.current().isJava9Compatible()) {
+        compileJava.options.release.set(8)
+}
+
+dependencies {
+  implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  implementation project(':core')
+
+  if(enableGraalNative == 'true') {
+    implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
+    }
+
+}
+
+def os = System.properties['os.name'].toLowerCase()
+
+run {
+  workingDir = rootProject.file('assets').path
+  setIgnoreExitValue(true)
+
+  if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
+}
+
+jar {
+    // définit le nom du fichier JAR produit
+    archiveBaseName.set("Wolframpage")  // Base du nom du fichier
+    archiveVersion.set("")              // Supprime la version si tu ne veux pas qu'elle apparaisse
+    archiveFileName.set("Wolframpage.jar")  // Nom final du fichier
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    dependsOn configurations.runtimeClasspath
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+    dependencies {
+        exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
+    }
+    manifest {
+        attributes 'Main-Class': project.mainClassName
+    }
+    doLast {
+        file(archiveFile).setExecutable(true, false)
+    }
+}
+
+construo {
+    // nom de l'exécutable
+    name.set(appName)
+    // nom lisible par l'homme, utilisé par exemple dans le nom de l'.app sur macOS
+    humanName.set(appName)
+    // Optionnel, valeur par défaut est la propriété de version du projet
+    version.set("$projectVersion")
+
+    targets.configure {
+      create("linuxX64", Target.Linux) {
+        architecture.set(Target.Architecture.X86_64)
+        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jdk_x64_linux_hotspot_17.0.12_7.tar.gz")
+      }
+      create("macM1", Target.MacOs) {
+        architecture.set(Target.Architecture.AARCH64)
+        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.12_7.tar.gz")
+        // macOS nécessite un identifiant
+        identifier.set("com.wolframpage." + appName)
+        // Optionnel : icône pour macOS
+        macIcon.set(project.file("icons/logo.icns"))
+      }
+      create("macX64", Target.MacOs) {
+        architecture.set(Target.Architecture.X86_64)
+        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jdk_x64_mac_hotspot_17.0.12_7.tar.gz")
+        // macOS nécessite un identifiant
+        identifier.set("com.wolframpage." + appName)
+        // Optionnel : icône pour macOS
+        macIcon.set(project.file("icons/logo.icns"))
+      }
+      create("winX64", Target.Windows) {
+        architecture.set(Target.Architecture.X86_64)
+        jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jdk_x64_windows_hotspot_17.0.12_7.zip")
+        // Décommente la ligne suivante pour afficher une console lors de l'exécution du jeu, pour imprimer des messages.
+        //useConsole.set(true)
+      }
+    }
+}
+
+// Equivalent à la tâche jar ; ici pour la compa
