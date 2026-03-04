@@ -1,33 +1,91 @@
-# wolf rampage
+# Wolf Rampage – LibGDX Game Prototype
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+2D game prototype developed with **LibGDX**.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+The project explores core concepts of game development such as:
 
-## Platforms
+- entity systems
+- collision handling
+- tiled map rendering
+- game state management
+- real-time update loops
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+---
 
-## Gradle
+# Overview
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+In **Wolf Rampage**, the player controls a wolf moving through different maps populated with various entities such as animals and obstacles.
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+The project focuses on implementing the core architecture of a small 2D game using LibGDX.
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+---
+
+# Features
+
+- Player movement and entity interactions
+- Multiple game screens (start screen, gameplay, game over)
+- Tile-based maps using **Tiled (.tmx)**
+- Multiple entities (wolf, sheep, bull, etc.)
+- Sprite rendering and animation
+- Collision detection
+- Game state management
+
+---
+
+# Technologies
+
+- **Java**
+- **LibGDX**
+- **LWJGL3 backend**
+- **Tiled Map Editor**
+
+---
+
+# Project Structure
+
+```
+core/       main game logic and entities
+lwjgl3/     desktop launcher
+assets/     sprites, maps and textures
+```
+
+Important classes include:
+
+- `Main.java` – game entry point
+- `GameScreen.java` – main gameplay loop
+- `Startscreen.java` – start menu
+- `GameOver.java` – game over screen
+- `Entity.java` – base class for game entities
+
+---
+
+# Running the project
+
+From the project root:
+
+```
+./gradlew lwjgl3:run
+```
+
+or on Windows:
+
+```
+gradlew.bat lwjgl3:run
+```
+
+This launches the desktop version of the game.
+
+---
+
+# Assets
+
+Maps are created using **Tiled** and stored in `.tmx` format.  
+Sprites and tilesets are located in the `assets/` directory.
+
+---
+
+# Author
+
+Nicolas Ventadoux  
+Master's student in Computer Science – Image & 3D  
+University of Strasbourg
